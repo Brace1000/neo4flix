@@ -10,19 +10,20 @@ import java.util.Optional;
 @Repository
 public interface RatingRepository extends Neo4jRepository<Rating, String> {
     
-    @Query("MATCH (u:User) WHERE ID(u) = $userId " +
-           "MATCH (u)-[r:RATED]->(m:Movie {id: $movieId}) RETURN r")
+    @Query("MATCH (u:User) WHERE id(u) = $userId " +
+           "MATCH (u)-[r:RATED]->(m:Movie) WHERE m.id = $movieId " +
+           "RETURN r")
     Optional<Rating> findByUserIdAndMovieId(Long userId, String movieId);
     
-    @Query("MATCH (u:User) WHERE ID(u) = $userId " +
+    @Query("MATCH (u:User) WHERE id(u) = $userId " +
            "MATCH (u)-[r:RATED]->(m:Movie) RETURN r")
     List<Rating> findByUserId(Long userId);
     
-    @Query("MATCH (u:User)-[r:RATED]->(m:Movie {id: $movieId}) RETURN r")
+    @Query("MATCH (u:User)-[r:RATED]->(m:Movie) WHERE m.id = $movieId RETURN r")
     List<Rating> findByMovieId(String movieId);
     
-    @Query("MATCH (u:User) WHERE ID(u) = $userId " +
-           "MATCH (m:Movie {id: $movieId}) " +
+    @Query("MATCH (u:User) WHERE id(u) = $userId " +
+           "MATCH (m:Movie) WHERE m.id = $movieId " +
            "MERGE (u)-[r:RATED]->(m) " +
            "SET r.score = $score, r.review = $review, r.createdAt = datetime() " +
            "WITH m " +
@@ -32,8 +33,8 @@ public interface RatingRepository extends Neo4jRepository<Rating, String> {
            "RETURN r")
     Rating createOrUpdateRating(Long userId, String movieId, Double score, String review);
     
-    @Query("MATCH (u:User) WHERE ID(u) = $userId " +
-           "MATCH (u)-[r:RATED]->(m:Movie {id: $movieId}) " +
+    @Query("MATCH (u:User) WHERE id(u) = $userId " +
+           "MATCH (u)-[r:RATED]->(m:Movie) WHERE m.id = $movieId " +
            "DELETE r " +
            "WITH m " +
            "OPTIONAL MATCH (m)<-[ratings:RATED]-() " +
