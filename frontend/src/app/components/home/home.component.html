@@ -1,0 +1,56 @@
+<app-navbar></app-navbar>
+
+<div class="min-h-screen bg-dark">
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold mb-6">Discover Movies</h1>
+      
+      <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <div class="flex-1">
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            (keyup.enter)="onSearch()"
+            placeholder="Search movies by title, genre..."
+            class="input-field">
+        </div>
+        <button (click)="onSearch()" class="btn-primary">Search</button>
+      </div>
+      
+      <div class="flex gap-4 items-center">
+        <label class="text-gray-300">Filter by Genre:</label>
+        <select [(ngModel)]="selectedGenre" (change)="filterByGenre()" class="input-field w-48">
+          <option value="">All Genres</option>
+          <option *ngFor="let genre of genres" [value]="genre">{{ genre }}</option>
+        </select>
+      </div>
+    </div>
+    
+    <div *ngIf="loading" class="text-center py-20">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <p class="mt-4 text-gray-400">Loading movies...</p>
+    </div>
+    
+    <div *ngIf="!loading && filteredMovies.length === 0" class="text-center py-20">
+      <p class="text-gray-400 text-xl">No movies found</p>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div *ngFor="let movie of filteredMovies" class="movie-card group" (click)="viewMovie(movie.id)">
+        <img 
+          [src]="movie.posterUrl || 'https://via.placeholder.com/300x450?text=' + movie.title" 
+          [alt]="movie.title"
+          class="w-full h-auto rounded-lg">
+        <div class="movie-card-overlay">
+          <div class="text-center p-4">
+            <h3 class="text-lg font-bold mb-2">{{ movie.title }}</h3>
+            <div class="flex items-center justify-center gap-2">
+              <span class="text-yellow-400">★</span>
+              <span>{{ movie.averageRating?.toFixed(1) || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
