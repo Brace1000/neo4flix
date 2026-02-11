@@ -10,6 +10,7 @@ import com.neo4flix.user.model.User;
 import com.neo4flix.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
@@ -106,10 +107,12 @@ public class UserService {
         return userRepository.findWatchlistByUserId(Long.parseLong(userId));
     }
 
+    @Transactional
     public void addToWatchlist(String userId, String movieId) {
         userRepository.addToWatchlist(Long.parseLong(userId), movieId);
     }
 
+    @Transactional
     public void removeFromWatchlist(String userId, String movieId) {
         userRepository.removeFromWatchlist(Long.parseLong(userId), movieId);
     }
