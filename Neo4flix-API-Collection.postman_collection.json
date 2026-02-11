@@ -1,0 +1,213 @@
+{
+  "info": {
+    "name": "Neo4flix API Collection",
+    "description": "Complete API collection for testing Neo4flix microservices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Service",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {"raw": "http://localhost:8081/api/users/register"}
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {"raw": "http://localhost:8081/api/users/login"}
+          }
+        },
+        {
+          "name": "Enable 2FA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8081/api/users/{{userId}}/2fa/enable"}
+          }
+        },
+        {
+          "name": "Get Watchlist",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8081/api/users/{{userId}}/watchlist"}
+          }
+        },
+        {
+          "name": "Add to Watchlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8081/api/users/{{userId}}/watchlist/{{movieId}}"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Movie Service",
+      "item": [
+        {
+          "name": "Get All Movies",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://localhost:8082/api/movies"}
+          }
+        },
+        {
+          "name": "Get Movie by ID",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://localhost:8082/api/movies/{{movieId}}"}
+          }
+        },
+        {
+          "name": "Search Movies",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://localhost:8082/api/movies/search?query=matrix"}
+          }
+        },
+        {
+          "name": "Search by Genre",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://localhost:8082/api/movies/search/genre?genre=Action"}
+          }
+        },
+        {
+          "name": "Get Top Rated",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://localhost:8082/api/movies/top-rated?limit=10"}
+          }
+        },
+        {
+          "name": "Create Movie",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Movie\",\n  \"description\": \"A test movie\",\n  \"releaseDate\": \"2024-01-01\",\n  \"genres\": [\"Action\", \"Drama\"],\n  \"posterUrl\": \"https://example.com/poster.jpg\"\n}"
+            },
+            "url": {"raw": "http://localhost:8082/api/movies"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rating Service",
+      "item": [
+        {
+          "name": "Create Rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"movieId\": \"{{movieId}}\",\n  \"score\": 4.5,\n  \"review\": \"Great movie!\"\n}"
+            },
+            "url": {"raw": "http://localhost:8083/api/ratings"}
+          }
+        },
+        {
+          "name": "Get User Ratings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8083/api/ratings/user/{{userId}}"}
+          }
+        },
+        {
+          "name": "Get Movie Ratings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8083/api/ratings/movie/{{movieId}}"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recommendation Service",
+      "item": [
+        {
+          "name": "Get Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8084/api/recommendations/user/{{userId}}?limit=10"}
+          }
+        },
+        {
+          "name": "Get Collaborative Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8084/api/recommendations/user/{{userId}}/collaborative?limit=10"}
+          }
+        },
+        {
+          "name": "Get Content-Based Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8084/api/recommendations/user/{{userId}}/content-based?limit=10"}
+          }
+        },
+        {
+          "name": "Get Recommendations by Genre",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {"raw": "http://localhost:8084/api/recommendations/user/{{userId}}/genre/Action?limit=10"}
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {"key": "token", "value": ""},
+    {"key": "userId", "value": ""},
+    {"key": "movieId", "value": ""}
+  ]
+}
