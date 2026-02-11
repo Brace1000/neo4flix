@@ -1,0 +1,104 @@
+services:
+  neo4j:
+    image: neo4j:5.13.0
+    container_name: neo4flix-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_dbms_memory_pagecache_size=1G
+      - NEO4J_dbms_memory_heap_initial__size=1G
+      - NEO4J_dbms_memory_heap_max__size=2G
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    networks:
+      - neo4flix-network
+
+  user-service:
+    build:
+      context: ./backend
+      dockerfile: user-service/Dockerfile
+    container_name: neo4flix-user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - neo4j
+    environment:
+      - SPRING_NEO4J_URI=bolt://neo4j:7687
+      - SPRING_NEO4J_AUTHENTICATION_USERNAME=neo4j
+      - SPRING_NEO4J_AUTHENTICATION_PASSWORD=password
+    networks:
+      - neo4flix-network
+
+  movie-service:
+    build:
+      context: ./backend
+      dockerfile: movie-service/Dockerfile
+    container_name: neo4flix-movie-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - neo4j
+    environment:
+      - SPRING_NEO4J_URI=bolt://neo4j:7687
+      - SPRING_NEO4J_AUTHENTICATION_USERNAME=neo4j
+      - SPRING_NEO4J_AUTHENTICATION_PASSWORD=password
+    networks:
+      - neo4flix-network
+
+  rating-service:
+    build:
+      context: ./backend
+      dockerfile: rating-service/Dockerfile
+    container_name: neo4flix-rating-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - neo4j
+    environment:
+      - SPRING_NEO4J_URI=bolt://neo4j:7687
+      - SPRING_NEO4J_AUTHENTICATION_USERNAME=neo4j
+      - SPRING_NEO4J_AUTHENTICATION_PASSWORD=password
+    networks:
+      - neo4flix-network
+
+  recommendation-service:
+    build:
+      context: ./backend
+      dockerfile: recommendation-service/Dockerfile
+    container_name: neo4flix-recommendation-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - neo4j
+    environment:
+      - SPRING_NEO4J_URI=bolt://neo4j:7687
+      - SPRING_NEO4J_AUTHENTICATION_USERNAME=neo4j
+      - SPRING_NEO4J_AUTHENTICATION_PASSWORD=password
+    networks:
+      - neo4flix-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: neo4flix-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - user-service
+      - movie-service
+      - rating-service
+      - recommendation-service
+    networks:
+      - neo4flix-network
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+
+networks:
+  neo4flix-network:
+    driver: bridge
