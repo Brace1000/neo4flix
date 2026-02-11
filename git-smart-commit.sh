@@ -42,47 +42,77 @@ generate_commit_message() {
     local filename=$(basename "$file")
     local dir=$(dirname "$file")
     local ext="${filename##*.}"
+    local lowercase_file=$(echo "$file" | tr '[:upper:]' '[:lower:]')
     
-    # Determine commit type and message based on file
+    # Check if file is modified or new
+    local is_modified=false
     if git ls-files --error-unmatch "$file" > /dev/null 2>&1; then
-        # File exists in git (modified)
-        if [[ $file == *"README"* ]] || [[ $file == *"GUIDE"* ]] || [[ $file == *".md" ]]; then
-            echo "docs: Update $filename"
-        elif [[ $file == *"test"* ]] || [[ $file == *"Test"* ]] || [[ $file == *"spec"* ]]; then
-            echo "test: Update $filename"
-        elif [[ $file == *"Controller"* ]] || [[ $file == *"Service"* ]] || [[ $file == *"Repository"* ]]; then
-            echo "refactor: Update $filename"
-        elif [[ $ext == "java" ]] || [[ $ext == "ts" ]] || [[ $ext == "js" ]] || [[ $ext == "py" ]]; then
-            echo "update: Modify $filename"
-        elif [[ $ext == "css" ]] || [[ $ext == "scss" ]] || [[ $ext == "html" ]]; then
-            echo "style: Update $filename"
-        elif [[ $file == *"Dockerfile"* ]] || [[ $file == *"docker-compose"* ]]; then
-            echo "build: Update $filename"
-        elif [[ $file == *"pom.xml"* ]] || [[ $file == *"package.json"* ]]; then
-            echo "build: Update dependencies in $filename"
-        else
-            echo "chore: Update $filename"
-        fi
+        is_modified=true
+    fi
+    
+    # Determine commit type based on file patterns
+    local commit_type=""
+    local action=""
+    
+    if $is_modified; then
+        action="Update"
     else
-        # New file
-        if [[ $file == *"README"* ]] || [[ $file == *"GUIDE"* ]] || [[ $file == *".md" ]]; then
-            echo "docs: Add $filename"
-        elif [[ $file == *"test"* ]] || [[ $file == *"Test"* ]] || [[ $file == *"spec"* ]]; then
-            echo "test: Add $filename"
-        elif [[ $file == *"Controller"* ]] || [[ $file == *"Service"* ]] || [[ $file == *"Repository"* ]]; then
-            echo "feat: Add $filename"
-        elif [[ $ext == "java" ]] || [[ $ext == "ts" ]] || [[ $ext == "js" ]] || [[ $ext == "py" ]]; then
-            echo "feat: Add $filename"
-        elif [[ $ext == "css" ]] || [[ $ext == "scss" ]] || [[ $ext == "html" ]]; then
-            echo "style: Add $filename"
-        elif [[ $file == *"Dockerfile"* ]] || [[ $file == *"docker-compose"* ]]; then
-            echo "build: Add $filename"
-        elif [[ $file == *".sh"* ]]; then
-            echo "chore: Add $filename script"
+        action="Add"
+    fi
+    
+    # Documentation files
+    if [[ $ext == "md" ]] || [[ $ext == "txt" ]] || [[ $ext == "rst" ]] || [[ $file == *"README"* ]] || [[ $file == *"CHANGELOG"* ]] || [[ $file == *"LICENSE"* ]]; then
+        commit_type="docs"
+    
+    # Test files
+    elif [[ $lowercase_file == *"test"* ]] || [[ $lowercase_file == *"spec"* ]] || [[ $file == *"Test."* ]] || [[ $file == *".test."* ]] || [[ $file == *".spec."* ]]; then
+        commit_type="test"
+    
+    # Configuration files
+    elif [[ $ext == "json" ]] || [[ $ext == "yaml" ]] || [[ $ext == "yml" ]] || [[ $ext == "toml" ]] || [[ $ext == "ini" ]] || [[ $ext == "conf" ]] || [[ $ext == "config" ]] || [[ $file == *".env"* ]] || [[ $filename == ".gitignore" ]] || [[ $filename == ".dockerignore" ]]; then
+        commit_type="chore"
+    
+    # Build/CI files
+    elif [[ $file == *"Dockerfile"* ]] || [[ $file == *"docker-compose"* ]] || [[ $file == *"Makefile"* ]] || [[ $file == *"pom.xml"* ]] || [[ $file == *"package.json"* ]] || [[ $file == *"package-lock.json"* ]] || [[ $file == *"yarn.lock"* ]] || [[ $file == *"Gemfile"* ]] || [[ $file == *"requirements.txt"* ]] || [[ $file == *"Cargo.toml"* ]] || [[ $file == *"go.mod"* ]] || [[ $file == *".gradle"* ]] || [[ $file == *"build.gradle"* ]]; then
+        commit_type="build"
+    
+    # CI/CD files
+    elif [[ $file == *".github/workflows"* ]] || [[ $file == *".gitlab-ci"* ]] || [[ $file == *"Jenkinsfile"* ]] || [[ $file == *".travis.yml"* ]] || [[ $file == *"circle.yml"* ]]; then
+        commit_type="ci"
+    
+    # Style files
+    elif [[ $ext == "css" ]] || [[ $ext == "scss" ]] || [[ $ext == "sass" ]] || [[ $ext == "less" ]] || [[ $ext == "html" ]] || [[ $ext == "htm" ]]; then
+        commit_type="style"
+    
+    # Code files - check for refactor patterns
+    elif $is_modified && ([[ $file == *"Controller"* ]] || [[ $file == *"Service"* ]] || [[ $file == *"Repository"* ]] || [[ $file == *"Model"* ]] || [[ $file == *"Component"* ]]); then
+        commit_type="refactor"
+        action="Refactor"
+    
+    # New feature files (code)
+    elif [[ $ext == "java" ]] || [[ $ext == "ts" ]] || [[ $ext == "tsx" ]] || [[ $ext == "js" ]] || [[ $ext == "jsx" ]] || [[ $ext == "py" ]] || [[ $ext == "rb" ]] || [[ $ext == "go" ]] || [[ $ext == "rs" ]] || [[ $ext == "c" ]] || [[ $ext == "cpp" ]] || [[ $ext == "cs" ]] || [[ $ext == "php" ]] || [[ $ext == "swift" ]] || [[ $ext == "kt" ]] || [[ $ext == "scala" ]]; then
+        if $is_modified; then
+            commit_type="fix"
+            action="Fix"
         else
-            echo "feat: Add $filename"
+            commit_type="feat"
+        fi
+    
+    # Shell scripts
+    elif [[ $ext == "sh" ]] || [[ $ext == "bash" ]] || [[ $ext == "zsh" ]]; then
+        commit_type="chore"
+        action="$action script"
+    
+    # Default
+    else
+        if $is_modified; then
+            commit_type="chore"
+        else
+            commit_type="feat"
         fi
     fi
+    
+    echo "$commit_type: $action $filename"
 }
 
 # Commit each file separately
