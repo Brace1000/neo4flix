@@ -72,10 +72,18 @@ export class MovieDetailComponent implements OnInit {
       
       this.ratingService.createRating(rating).subscribe({
         next: () => {
-          alert('Rating submitted successfully!');
+          alert('✅ Rating submitted successfully!');
+          this.userRating = 0;
+          this.userReview = '';
           this.loadMovie(this.movie!.id);
+        },
+        error: (err) => {
+          console.error('Rating error:', err);
+          alert('❌ Failed to submit rating. Please try again.');
         }
       });
+    } else if (this.userRating === 0) {
+      alert('⚠️ Please select a rating (1-5 stars)');
     }
   }
 
@@ -86,15 +94,27 @@ export class MovieDetailComponent implements OnInit {
         this.watchlistService.removeFromWatchlist(user.id, this.movie.id).subscribe({
           next: () => {
             this.inWatchlist = false;
+            alert('✅ Removed from watchlist');
+          },
+          error: (err) => {
+            console.error('Remove from watchlist error:', err);
+            alert('❌ Failed to remove from watchlist');
           }
         });
       } else {
         this.watchlistService.addToWatchlist(user.id, this.movie.id).subscribe({
           next: () => {
             this.inWatchlist = true;
+            alert('✅ Added to watchlist!');
+          },
+          error: (err) => {
+            console.error('Add to watchlist error:', err);
+            alert('❌ Failed to add to watchlist');
           }
         });
       }
+    } else {
+      alert('⚠️ Please login to use watchlist');
     }
   }
 
