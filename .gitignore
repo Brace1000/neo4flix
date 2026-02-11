@@ -1,0 +1,41 @@
+# Compiled class files
+*.class
+target/
+*.jar
+*.war
+*.ear
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Node
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Angular
+.angular/
+.sass-cache/
+
+# Environment
+.env
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+
+# Neo4j
+neo4j_data/
+neo4j_logs/
