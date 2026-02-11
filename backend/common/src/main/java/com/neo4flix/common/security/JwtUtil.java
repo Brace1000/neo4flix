@@ -11,7 +11,7 @@ import java.util.Map;
 @Component
 public class JwtUtil {
     private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("Neo4flixSecretKeyForJWTTokenGenerationAndValidation2024".getBytes());
-    private final long EXPIRATION_TIME = 86400000; // 24 hours
+    private final long EXPIRATION_TIME = 86400000; 
 
     public String generateToken(String username, String userId) {
         Map<String, Object> claims = new HashMap<>();
