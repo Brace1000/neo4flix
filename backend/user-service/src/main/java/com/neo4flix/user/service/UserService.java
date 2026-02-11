@@ -104,23 +104,23 @@ public class UserService {
     }
 
     public Set<String> getWatchlist(String userId) {
-        User user = userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return userRepository.findWatchlistByUserId(user.getId());
+        return userRepository.findWatchlistByUserId(Long.parseLong(userId));
     }
 
     @Transactional
     public void addToWatchlist(String userId, String movieId) {
-        User user = userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        userRepository.addToWatchlist(user.getId(), movieId);
+        Boolean result = userRepository.addToWatchlist(Long.parseLong(userId), movieId);
+        if (result == null || !result) {
+            throw new RuntimeException("Failed to add movie to watchlist. User or Movie not found.");
+        }
     }
 
     @Transactional
     public void removeFromWatchlist(String userId, String movieId) {
-        User user = userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        userRepository.removeFromWatchlist(user.getId(), movieId);
+        Boolean result = userRepository.removeFromWatchlist(Long.parseLong(userId), movieId);
+        if (result == null || !result) {
+            throw new RuntimeException("Failed to remove movie from watchlist.");
+        }
     }
 
     private String generateSecret() {
