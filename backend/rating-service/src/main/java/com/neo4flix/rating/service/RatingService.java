@@ -3,6 +3,7 @@ package com.neo4flix.rating.service;
 import com.neo4flix.rating.model.Rating;
 import com.neo4flix.rating.repository.RatingRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class RatingService {
         this.ratingRepository = ratingRepository;
     }
 
+    @Transactional
     public Rating createOrUpdateRating(String userId, String movieId, Double score, String review) {
         if (score < 0 || score > 5) {
             throw new RuntimeException("Rating must be between 0 and 5");
@@ -34,6 +36,7 @@ public class RatingService {
         return ratingRepository.findByMovieId(movieId);
     }
 
+    @Transactional
     public void deleteRating(String userId, String movieId) {
         ratingRepository.deleteRating(Long.parseLong(userId), movieId);
     }
