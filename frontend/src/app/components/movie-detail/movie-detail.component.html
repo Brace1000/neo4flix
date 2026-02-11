@@ -1,0 +1,85 @@
+<app-navbar></app-navbar>
+
+<div class="min-h-screen bg-dark">
+  <div *ngIf="loading" class="text-center py-20">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  </div>
+  
+  <div *ngIf="!loading && movie" class="container mx-auto px-4 py-8">
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="md:col-span-1">
+        <img 
+          [src]="movie.posterUrl || 'https://via.placeholder.com/300x450?text=' + movie.title" 
+          [alt]="movie.title"
+          class="w-full rounded-lg shadow-2xl">
+        
+        <button 
+          (click)="toggleWatchlist()" 
+          class="w-full mt-4"
+          [ngClass]="inWatchlist ? 'btn-secondary' : 'btn-primary'">
+          {{ inWatchlist ? '✓ In Watchlist' : '+ Add to Watchlist' }}
+        </button>
+      </div>
+      
+      <div class="md:col-span-2">
+        <h1 class="text-4xl font-bold mb-4">{{ movie.title }}</h1>
+        
+        <div class="flex items-center gap-4 mb-6">
+          <div class="flex items-center">
+            <span class="text-yellow-400 text-2xl mr-2">★</span>
+            <span class="text-2xl">{{ movie.averageRating?.toFixed(1) || 'N/A' }}</span>
+            <span class="text-gray-400 ml-2">({{ movie.ratingCount || 0 }} ratings)</span>
+          </div>
+          <span class="text-gray-400">{{ movie.releaseDate }}</span>
+        </div>
+        
+        <div class="mb-6">
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let genre of movie.genres" 
+                  class="px-3 py-1 bg-gray-700 rounded-full text-sm">
+              {{ genre }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold mb-3">Overview</h2>
+          <p class="text-gray-300 leading-relaxed">{{ movie.description }}</p>
+        </div>
+        
+        <div class="bg-secondary p-6 rounded-lg">
+          <h2 class="text-2xl font-bold mb-4">Rate this Movie</h2>
+          
+          <div class="mb-4">
+            <label class="block mb-2">Your Rating:</label>
+            <div class="flex gap-2">
+              <button 
+                *ngFor="let star of [1,2,3,4,5]" 
+                (click)="setRating(star)"
+                class="text-3xl transition-colors"
+                [ngClass]="star <= userRating ? 'text-yellow-400' : 'text-gray-600'">
+                ★
+              </button>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label class="block mb-2">Your Review (Optional):</label>
+            <textarea 
+              [(ngModel)]="userReview"
+              rows="4"
+              class="input-field"
+              placeholder="Share your thoughts about this movie..."></textarea>
+          </div>
+          
+          <button 
+            (click)="submitRating()" 
+            [disabled]="userRating === 0"
+            class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
+            Submit Rating
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
