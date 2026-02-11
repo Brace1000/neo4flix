@@ -1,0 +1,78 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark via-secondary to-dark px-4">
+  <div class="max-w-md w-full">
+    <div class="text-center mb-8">
+      <h1 class="text-5xl font-bold text-primary mb-2">NEO4FLIX</h1>
+      <p class="text-gray-400">Create your account</p>
+    </div>
+    
+    <div class="bg-secondary p-8 rounded-lg shadow-2xl">
+      <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Username</label>
+          <input 
+            type="text" 
+            [(ngModel)]="registerData.username" 
+            name="username"
+            required
+            minlength="3"
+            class="input-field"
+            placeholder="Choose a username">
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Email</label>
+          <input 
+            type="email" 
+            [(ngModel)]="registerData.email" 
+            name="email"
+            required
+            email
+            class="input-field"
+            placeholder="Enter your email">
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Password</label>
+          <input 
+            type="password" 
+            [(ngModel)]="registerData.password" 
+            name="password"
+            required
+            minlength="8"
+            class="input-field"
+            placeholder="Create a strong password">
+          <p class="text-xs text-gray-400 mt-1">Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char</p>
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Confirm Password</label>
+          <input 
+            type="password" 
+            [(ngModel)]="confirmPassword" 
+            name="confirmPassword"
+            required
+            class="input-field"
+            placeholder="Confirm your password">
+        </div>
+        
+        <div *ngIf="error" class="mb-4 p-3 bg-red-900 bg-opacity-50 border border-red-500 rounded text-red-200 text-sm">
+          {{ error }}
+        </div>
+        
+        <button 
+          type="submit" 
+          [disabled]="!registerForm.valid || loading"
+          class="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
+          {{ loading ? 'Creating Account...' : 'Sign Up' }}
+        </button>
+      </form>
+      
+      <div class="mt-6 text-center">
+        <p class="text-gray-400">
+          Already have an account? 
+          <a routerLink="/login" class="text-primary hover:underline ml-1">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
