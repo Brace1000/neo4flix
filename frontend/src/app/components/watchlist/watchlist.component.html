@@ -1,0 +1,41 @@
+<app-navbar></app-navbar>
+
+<div class="min-h-screen bg-dark">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8">My Watchlist</h1>
+    
+    <div *ngIf="loading" class="text-center py-20">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    </div>
+    
+    <div *ngIf="!loading && movies.length === 0" class="text-center py-20">
+      <p class="text-gray-400 text-xl mb-4">Your watchlist is empty</p>
+      <a routerLink="/home" class="btn-primary">Browse Movies</a>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div *ngFor="let movie of movies" class="relative group">
+        <div class="movie-card group" (click)="viewMovie(movie.id)">
+          <img 
+            [src]="movie.posterUrl || 'https://via.placeholder.com/300x450?text=' + movie.title" 
+            [alt]="movie.title"
+            class="w-full h-auto rounded-lg">
+          <div class="movie-card-overlay">
+            <div class="text-center p-4">
+              <h3 class="text-lg font-bold mb-2">{{ movie.title }}</h3>
+              <div class="flex items-center justify-center gap-2">
+                <span class="text-yellow-400">★</span>
+                <span>{{ movie.averageRating?.toFixed(1) || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button 
+          (click)="removeFromWatchlist(movie.id); $event.stopPropagation()"
+          class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          ✕
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
