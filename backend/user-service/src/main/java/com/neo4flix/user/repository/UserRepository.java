@@ -17,10 +17,15 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     @Query("MATCH (u:User) WHERE ID(u) = $userId MATCH (u)-[:WATCHLIST]->(m:Movie) RETURN m.id")
     Set<String> findWatchlistByUserId(Long userId);
     
-    @Query("MATCH (u:User) WHERE ID(u) = $userId MATCH (m:Movie {id: $movieId}) " +
-           "MERGE (u)-[:WATCHLIST]->(m)")
+    @Query("MATCH (u:User) WHERE ID(u) = $userId " +
+           "MATCH (m:Movie {id: $movieId}) " +
+           "MERGE (u)-[:WATCHLIST]->(m) " +
+           "RETURN u")
     void addToWatchlist(Long userId, String movieId);
     
-    @Query("MATCH (u:User) WHERE ID(u) = $userId MATCH (u)-[r:WATCHLIST]->(m:Movie {id: $movieId}) DELETE r")
+    @Query("MATCH (u:User) WHERE ID(u) = $userId " +
+           "MATCH (u)-[r:WATCHLIST]->(m:Movie {id: $movieId}) " +
+           "DELETE r " +
+           "RETURN u")
     void removeFromWatchlist(Long userId, String movieId);
 }
