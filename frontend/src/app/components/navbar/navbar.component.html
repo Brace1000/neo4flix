@@ -1,0 +1,28 @@
+<nav class="bg-secondary shadow-lg sticky top-0 z-50">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center space-x-8">
+        <a routerLink="/home" class="text-3xl font-bold text-primary">NEO4FLIX</a>
+        
+        <div class="hidden md:flex space-x-6">
+          <a routerLink="/home" routerLinkActive="text-primary" class="text-gray-300 hover:text-white transition">
+            Home
+          </a>
+          <a routerLink="/recommendations" routerLinkActive="text-primary" class="text-gray-300 hover:text-white transition">
+            Recommendations
+          </a>
+          <a routerLink="/watchlist" routerLinkActive="text-primary" class="text-gray-300 hover:text-white transition">
+            My Watchlist
+          </a>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-300">Welcome, {{ currentUser?.username }}</span>
+        <button (click)="logout()" class="btn-secondary text-sm">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
